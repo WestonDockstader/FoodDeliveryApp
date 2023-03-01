@@ -1,0 +1,123 @@
+@startuml
+header Learn and Design 2023 - POD 1
+footer Page %page% of %lastpage%
+
+title: Food Delivery Application - Create Order
+
+actor Consumer
+
+participant ConsumerView [
+    = Consumer View
+]
+
+participant RestaurantsList [
+    = Restaurants
+]
+
+participant Menu [
+    = Menu
+]
+participant Items [
+    = Items
+]
+participant Cart [
+    = Cart
+]
+
+participant Order [
+    = Order
+]
+
+participant Restaurant [
+    = Restaurant
+]
+
+participant Payment [
+    = Payment
+]
+
+group Authenticate
+  Consumer -[#blue]> ConsumerView : SignIn()
+  ConsumerView -[#green]> ConsumerView : evaluateRole()
+end
+
+group Find Restaurants
+  ConsumerView -[#blue]> RestaurantsList : GetRestaurants()
+  RestaurantsList -[#red]-> ConsumerView : RestaurantList
+  ConsumerView -[#green]> ConsumerView : FilterRestaurants()
+  ConsumerView -[#green]> ConsumerView : SortRestaurants()
+  ConsumerView -[#green]> ConsumerView : SelectRestaurant()
+  ConsumerView -[#blue]> RestaurantsList : GetRestaurantInfo()
+  RestaurantsList -[#blue]> Restaurant : GetRestaurantInfo()
+  Restaurant -[#red]-> RestaurantsList : RestaurantInfo
+  RestaurantsList -[#red]-> ConsumerView : RestaurantInfo
+end
+
+group View Menu
+  ConsumerView -[#green]> ConsumerView : SelectRestaurant()
+  ConsumerView -[#blue]> Menu : GetMenu()
+  Menu -[#blue]> Items : GetItems()
+  Items -[#red]> Menu : Items
+  Menu -[#red]-> ConsumerView : Menu
+  ConsumerView -[#green]> ConsumerView : SearchMenu()
+end
+
+group Select Menu Items
+  ConsumerView -[#blue]> Menu : SelectMenuItem()
+  Menu -[#red]-> ConsumerView : SelectedMenuItem
+end
+
+group Cart
+  group Add Items to Cart
+    ConsumerView -[#blue]> Cart : AddItemToCart()
+    Cart -[#red]-> ConsumerView : CartContents
+  end
+
+  group Edit Cart
+    ConsumerView -[#green]> ConsumerView : EditCart()
+    ConsumerView -[#blue]> Cart : RemoveItem()
+    ConsumerView -[#blue]> Cart : UpdateItemQuantity()
+    ConsumerView -[#blue]> Cart : AddItemInstructions()
+    Cart -[#red]-> ConsumerView : CartContents
+  end
+
+end
+
+  group Order
+  ConsumerView -[#blue]> Order : CreateOrder()
+  ConsumerView -[#blue]> Order : AddDiscountCode()
+  ConsumerView -[#blue]> Order : AddPayment()
+  Order -[#blue]> Restaurant : GetEstimatedDeliveryTime()
+
+  Order -[#red]-> ConsumerView : Order
+  ConsumerView -[#green]> ConsumerView : ReviewOrder()
+  ConsumerView -[#blue]> Cart : SubmitOrder()
+  Cart -[#blue]> Order : SubmitOrder()
+  Cart -[#green]> Cart : ClearCart()
+  Order -[#blue]> Restaurant : SubmitOrder()
+  Restaurant -[#green]> Payment : SubmitPayment()
+  Payment -[#red]> Restaurant : PaymentStatus
+  Restaurant -[#green]> Restaurant : CanStartOrder()
+    note left
+      IF payment is card AND payment is approved
+      OR payment is COD
+    end note
+  Restaurant -[#red]> Order : OrderStatus
+  Order -[#green]> Order : UpdateConsumerOrderStatus()
+  Order -[#red]> ConsumerView : OrderStatus
+
+  group Delivery
+    Restaurant -[#green]> Restaurant : OrderInProcess()
+    Restaurant -[#green]> Restaurant : OrderShipped()
+    Restaurant -[#green]> Restaurant : OrderDelivered()
+    note left
+      Requires Cash Payment to Delivery if COD
+    end note
+    Restaurant -[#red]> Order : OrderStatus
+    Order -[#green]> Order : UpdateConsumerOrderStatus()
+    Order -[#red]-> ConsumerView : OrderStatus
+  end
+end
+
+
+@enduml
