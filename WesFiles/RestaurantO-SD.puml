@@ -1,0 +1,37 @@
+@startuml 
+
+title Food Delivery Application\nRestuarant Owner Sequence Diagram
+
+actor RestaurantOwner
+
+participant System as System 
+participant RestaurantList as RestaurantList
+participant Item as Item
+participant Menu as Menu
+participant Order as Order 
+participant Payment as Payment 
+
+group Request Registration
+    RestaurantOwner -[#blue]> System : Request Registration
+    activate System
+        System -[#red]-> ApplicationManager : Send Registration Request
+        ApplicationManager -[#blue]> System : Request Response
+        System -[#green]> System : ApproveRegistration()
+            activate RestaurantList
+            System -[#blue]> RestaurantList : Update Restaurant List
+            System -[#red]-> RestaurantOwner : Send Registration Response
+            deactivate RestaurantList
+end /'End Request Registration'/
+
+group View Registration
+        ApplicationManager -[#blue]> System : Get All Registrations
+        System -[#red]-> ApplicationManager : Send All Registrations
+    deactivate System
+end /'End View Regisration'/
+
+group Create Menu
+    RestaurantOwner -[#blue]> Item : Create Item
+    activate Item
+end /'Create Menu'/
+
+@enduml 

@@ -1,0 +1,65 @@
+@startuml 
+
+title Food Delivery Application\nApplication Manager Sequence Diagram 
+
+'one line comment
+
+/'
+multiple line comment
+'/
+actor ApplicationManager
+
+participant AppMan_UI as AppMan_UI
+participant System as System 
+participant Restaurants as Restaurants
+participant Order as Order 
+participant Payment as Payment 
+
+group Login
+    ApplicationManager -[#blue]-> AppMan_UI : Sign In
+activate AppMan_UI
+    AppMan_UI -[#green]> AppMan_UI : Authenticate
+end /'end Login'/
+
+group Handle Requests
+    System -[#red]->AppMan_UI : Push New Registration Requests
+activate System
+    AppMan_UI -[#green]>AppMan_UI : Approve Registration
+    AppMan_UI -[#blue]>System : Submit Registration Response
+    System-[#blue]>Restaurants : Update Registraion
+activate Restaurants
+    Restaurants-[#green]>Restaurants : UpdateRestaurant
+end /'end Handle Requests'/
+deactivate Restaurants
+
+group Get Request History
+    AppMan_UI-[#blue]> System : Get All Requests
+    System -[#red]-> AppMan_UI : Return All Requests
+end /'end Get Request History'/
+
+group Get Order Requests
+    AppMan_UI-[#Blue]>Order : Get All Order Requests
+activate Order
+    Order-[#red]->AppMan_UI : Return All Order Requests
+    'loop /'Look Up Concurrent'/
+        AppMan_UI-[#blue]> System : Get Order Status?
+        System-[#red]->AppMan_UI : Return Order Status?
+deactivate System
+        AppMan_UI-[#green]>AppMan_UI : OfflineApproval? 
+        AppMan_UI-[#green]>AppMan_UI : ActionIsApproved 
+        alt Order Has Been Canceled
+            AppMan_UI-[#green]>AppMan_UI : CancelApproved
+            AppMan_UI-[#blue]>Order : Update Order Status
+            else Order has been Paid for
+            AppMan_UI-[#green]>AppMan_UI : RefundApproved
+            AppMan_UI-[#blue]>Order : Update Order Status
+deactivate Order
+            AppMan_UI-[#blue]>Payment : Initiate Refund
+deactivate AppMan_UI
+activate Payment
+            Payment-[#green]>Payment : ProcessRefund
+        end /'end alt'/
+deactivate Payment
+   ' end /'end loop'/
+end /'End Get Order Requests'/
+@enduml 
