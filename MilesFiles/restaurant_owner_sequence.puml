@@ -2,34 +2,34 @@
 header Learn and Design 2023 - POD 1
 footer Page %page% of %lastpage%
 
-title: Food Delivery Application - Create Order
+title: Food Delivery Application - RestaurantOwner Registration
 
 actor Consumer
+actor ApplicationManager
+actor RestaurantOwner
 
-participant ConsumerView [
-    = Consumer View
+participant RestaurantOwnerView [
+    = RestaurantOwnerView
 ]
 
-participant RestaurantsList [
-    = Restaurants
+participant Registration [
+    = Registration
 ]
 
 participant Menu [
     = Menu
 ]
+
 participant Items [
     = Items
 ]
-participant Cart [
-    = Cart
+
+participant Orders [
+    = Orders
 ]
 
-participant Order [
-    = Order
-]
-
-participant Restaurant [
-    = Restaurant
+participant Refund [
+    = Refund
 ]
 
 participant Payment [
@@ -37,87 +37,64 @@ participant Payment [
 ]
 
 group Authenticate
-  Consumer -[#blue]> ConsumerView : SignIn()
-  ConsumerView -[#green]> ConsumerView : evaluateRole()
+  RestaurantOwner -[#blue]> RestaurantOwnerView : SignIn()
+  activate RestaurantOwnerView
+    RestaurantOwnerView -[#green]> RestaurantOwnerView : evaluateRole()
 end
 
-group Find Restaurants
-  ConsumerView -[#blue]> RestaurantsList : GetRestaurants()
-  RestaurantsList -[#red]-> ConsumerView : RestaurantList
-  ConsumerView -[#green]> ConsumerView : FilterRestaurants()
-  ConsumerView -[#green]> ConsumerView : SortRestaurants()
-  ConsumerView -[#green]> ConsumerView : SelectRestaurant()
-  ConsumerView -[#blue]> RestaurantsList : GetRestaurantInfo()
-  RestaurantsList -[#blue]> Restaurant : GetRestaurantInfo()
-  Restaurant -[#red]-> RestaurantsList : RestaurantInfo
-  RestaurantsList -[#red]-> ConsumerView : RestaurantInfo
+group Manage Registration
+  RestaurantOwnerView -[#blue]> Registration : createRegistration(registrationInfo)
+  activate Registration
+    Registration -[#red]->  ApplicationManager : registrationNotification(registrationInfo)
+    ApplicationManager -[#blue]> Registration : updateRegistrationStatus(registrationId, registrationStatus)
+    RestaurantOwnerView -[#blue]> Registration : getRegistrationStatus(restaurantOwnerId)
+  deactivate Registration
 end
+
+group Manage Menu
+  RestaurantOwnerView -[#blue]> Items : createItem(itemInfo)
+  activate Items
+  activate Menu
+  RestaurantOwnerView -[#blue]> Menu : addItems(itemIds)
+  RestaurantOwnerView -[#blue]> Menu : removeItemFromMenu(itemId)
+  RestaurantOwnerView -[#blue]> Items : editItem(itemInfo)
+  RestaurantOwnerView -[#blue]> Items : deleteItem(itemId)
+end
+
+note left
+  [registrationStatus === approved]
+end note
 
 group View Menu
-  ConsumerView -[#green]> ConsumerView : SelectRestaurant()
-  ConsumerView -[#blue]> Menu : GetMenu()
-  Menu -[#blue]> Items : GetItems()
-  Items -[#red]> Menu : Items
-  Menu -[#red]-> ConsumerView : Menu
-  ConsumerView -[#green]> ConsumerView : SearchMenu()
+  RestaurantOwnerView -[#blue]> Menu : getMenu(restaurantOwnerId)
+  Menu -[#blue]> Items : getItems(menuId, restaurantOwnerId)
+  deactivate Items
+  Menu -[#red]-> RestaurantOwnerView : menu
+  deactivate Menu
 end
 
-group Select Menu Items
-  ConsumerView -[#blue]> Menu : SelectMenuItem()
-  Menu -[#red]-> ConsumerView : SelectedMenuItem
+group Manage Orders
+  RestaurantOwnerView -[#blue]> Orders : getOrders(restaurantOwnerId)
+  activate Orders
+    RestaurantOwnerView -[#green]> RestaurantOwnerView : selectOrder(orderId)
+    RestaurantOwnerView -[#blue]> Orders : updateOrderStatus(orderId, statusId)
 end
 
-group Cart
-  group Add Items to Cart
-    ConsumerView -[#blue]> Cart : AddItemToCart()
-    Cart -[#red]-> ConsumerView : CartContents
-  end
 
-  group Edit Cart
-    ConsumerView -[#green]> ConsumerView : EditCart()
-    ConsumerView -[#blue]> Cart : RemoveItem()
-    ConsumerView -[#blue]> Cart : UpdateItemQuantity()
-    ConsumerView -[#blue]> Cart : AddItemInstructions()
-    Cart -[#red]-> ConsumerView : CartContents
-  end
-
+group Refund
+  Consumer -[#blue]> Refund : requestRefund(orderId)
+  activate Refund
+    RestaurantOwnerView -[#blue]> Refund : acknowledgeRefund(orderId, refundStatus)
+    Refund -[#red]-> ApplicationManager : refundNotification
+    ApplicationManager -[#blue]> Refund : initiateRefund(orderId)
+    Refund -[#blue]> Payment : processRefund(orderId)
+    Payment -[#green]> Payment : processPayment(orderId)
+    Payment -[#red]-> Refund : PaymentStatus
+    Refund -[#red]-> Orders : RefundStatus
+    Orders -[#red]-> RestaurantOwnerView : OrderStatus
+  deactivate RestaurantOwnerView
+  deactivate Orders
+  deactivate Refund
 end
-
-  group Order
-  ConsumerView -[#blue]> Order : CreateOrder()
-  ConsumerView -[#blue]> Order : AddDiscountCode()
-  ConsumerView -[#blue]> Order : AddPayment()
-  Order -[#blue]> Restaurant : GetEstimatedDeliveryTime()
-
-  Order -[#red]-> ConsumerView : Order
-  ConsumerView -[#green]> ConsumerView : ReviewOrder()
-  ConsumerView -[#blue]> Cart : SubmitOrder()
-  Cart -[#blue]> Order : SubmitOrder()
-  Cart -[#green]> Cart : ClearCart()
-  Order -[#blue]> Restaurant : SubmitOrder()
-  Restaurant -[#green]> Payment : SubmitPayment()
-  Payment -[#red]> Restaurant : PaymentStatus
-  Restaurant -[#green]> Restaurant : CanStartOrder()
-    note left
-      IF payment is card AND payment is approved
-      OR payment is COD
-    end note
-  Restaurant -[#red]> Order : OrderStatus
-  Order -[#green]> Order : UpdateConsumerOrderStatus()
-  Order -[#red]> ConsumerView : OrderStatus
-
-  group Delivery
-    Restaurant -[#green]> Restaurant : OrderInProcess()
-    Restaurant -[#green]> Restaurant : OrderShipped()
-    Restaurant -[#green]> Restaurant : OrderDelivered()
-    note left
-      Requires Cash Payment to Delivery if COD
-    end note
-    Restaurant -[#red]> Order : OrderStatus
-    Order -[#green]> Order : UpdateConsumerOrderStatus()
-    Order -[#red]-> ConsumerView : OrderStatus
-  end
-end
-
 
 @enduml
