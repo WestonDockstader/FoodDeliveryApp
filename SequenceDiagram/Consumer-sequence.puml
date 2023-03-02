@@ -1,0 +1,110 @@
+@startuml
+header Learn and Design 2023 - POD 1
+footer Page %page% of %lastpage%
+
+title: Food Delivery Application - Create Order
+
+actor Consumer
+
+participant Home [
+    = Home
+]
+
+participant ViewRestaurants [
+    = View Restaurants
+]
+
+participant Menu [
+    = Menu
+]
+
+participant Cart [
+    = Cart
+]
+
+participant Order [
+    = Order
+]
+
+participant Restaurant [
+    = Restaurant
+]
+
+participant Refund [
+    = Refund
+]
+
+Consumer -> Home : SignIn()
+    group Find Restaurants
+Home -[#blue]> ViewRestaurants : FindRestaurants()
+ViewRestaurants -[#red]-> Home : RestaurantList
+Home -[#green]> Home : SelectRestaurant()
+Home -[#blue]> ViewRestaurants : GetRestaurantInfo()
+ViewRestaurants -[#blue]> Restaurant : GetRestaurantInfo()
+Restaurant -[#red]-> ViewRestaurants : RestaurantInfo
+ViewRestaurants -[#red]-> Home : RestaurantInfo
+Home -[#green]> Home : ViewRestaurantRating()
+Home -[#green]> Home : ViewRestaurantPopularity()
+Home -[#green]> Home : ViewRestaurantAvgDeliveryTime()
+    end
+    group View Menu
+Home -[#green]> Home : SelectRestaurant()
+Home -[#blue]> Menu : GetMenu()
+Menu -[#red]-> Home : Menu
+Home -[#green]> Home : ViewMenuItems()
+    end
+    group Select Menu Items
+Home -[#blue]> Menu : SelectMenuItem()
+Menu -[#red]-> Home : MenuItemId
+    end
+    group Cart
+        group Add Items to Cart
+Home -[#blue]> Cart : CreateCartItem(MenuItemId)
+Cart -[#red]-> Home : CartItemId
+        end
+        group Edit Cart
+Home -[#green]> Home : EditCart()
+Home -[#blue]> Cart : RemoveItem()
+Home -[#blue]> Cart : UpdateItemQuantity()
+Home -[#blue]> Cart : AddItemInstructions()
+Cart -[#red]-> Home : CartContents
+        end
+    end
+    group Order
+Home -[#blue]> Order : CreateOrder()
+Home -[#blue]> Order : DiscountCode()
+Home -[#blue]> Order : AddPayment()
+Order -[#blue]> Restaurant : GetEstimatedDeliveryTime()
+
+Order -[#red]-> Home : Order
+Home -[#green]> Home : ReviewOrder()
+Home -[#blue]> Order : SubmitOrder()
+Order -[#blue]> Restaurant : SubmitOrder()
+Restaurant -[#green]> Restaurant : OrderPaymentApproved()
+Restaurant -[#green]> Restaurant : CanStartOrder()
+Restaurant -[#red]> Order : OrderStatus
+        group Delivery
+Restaurant -[#green]> Restaurant : OrderInProcess()
+Restaurant -[#green]> Restaurant : OrderShipped()
+Restaurant -[#green]> Restaurant : OrderDelivered()
+Restaurant -[#red]> Order : OrderStatus
+Order -[#green]> Order : UpdateConsumerOrderStatus()
+Order -[#red]-> Home : OrderStatus
+        end
+        group Cancel
+Home -[#blue]> Order : CancelOrder()
+Order -[#blue]> Restaurant : CancelOrder()
+Restaurant -[#red]-> Order : OrderStatus
+Order -[#green]> Order : CanCancelOrder()
+Order -[#green]> Order : UpdateConsumerOrderStatus()
+Order -[#red]-> Home : OrderStatus
+Order -[#blue]> Refund : RequestRefund()
+Refund -[#green]> Refund : CanRefundOrder()
+Refund -[#red]-> Order : RefundStatus
+Order -[#green]> Order : IsRefundApproved()
+Order -[#red]-> Home : RefundStatus
+        end
+    end
+
+
+@enduml

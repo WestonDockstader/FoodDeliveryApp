@@ -1,0 +1,40 @@
+@startuml
+header Learn and Design 2023 - POD 1
+footer Page %page% of %lastpage%
+
+title: Food Delivery Application - Application Manager Refunds
+
+actor ApplicationManager
+
+participant ApplicationManagerHome [
+    = Application Manager Home
+]
+
+participant Refund [
+    = Refund
+]
+
+participant Orders [
+    = Orders
+]
+
+participant Order [
+    = Order
+]
+
+participant RestaurantOwner [
+    = Restaurant Owner Home
+]
+
+actor Consumer
+
+    group Initiate Refund
+    note left
+        Consumer has requested a refund
+    end note
+
+
+
+    end
+
+@enduml

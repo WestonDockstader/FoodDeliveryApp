@@ -1,0 +1,60 @@
+@startuml
+header Learn and Design 2023 - POD 1
+footer Page %page% of %lastpage%
+
+title: Food Delivery Application - Application Manager Registrations
+
+actor ApplicationManager
+
+participant ApplicationManagerHome [
+    = Application Manager Home
+]
+
+participant Registrations [
+    = Registrations
+]
+
+participant Registration [
+    = Registration
+]
+
+participant RestaurantOwnerHome [
+    = Restaurant Owner Home
+]
+
+actor RestaurantOwner
+
+    group Create New Registration
+ApplicationManager -> ApplicationManagerHome : SignIn()
+RestaurantOwnerHome <- RestaurantOwner : SignIn()
+Registration <[#blue]- RestaurantOwnerHome : CreateRegistration(UserId)
+Registrations <[#blue]- Registration : AddNewRegistration(RegistrationId)
+Registration -[#red]> RestaurantOwnerHome : RegistrationId
+ApplicationManager <[#blue]- Registration : NotifyNewRegistration()
+    end
+    group Process New Registration
+Registrations <[#blue]- ApplicationManager : GetRegistrations()
+Registrations -[#red]> ApplicationManager : ArrayList<Registrations>
+ApplicationManager -[#green]> ApplicationManager : FindNewRegistrations()
+ApplicationManager -[#green]> ApplicationManager : AcceptRejectRegistration()
+ApplicationManager -[#blue]> Registration : SetRegistrationStatus(RegistrationId, RegistrationStatus)
+    end
+    group View Registrations
+Registrations <[#blue]- ApplicationManager : GetRegistrations()
+ApplicationManager -[#green]> ApplicationManager : ViewOpenRegistrations()
+ApplicationManager -[#green]> ApplicationManager : ViewRejectedRegistrations()
+ApplicationManager -[#green]> ApplicationManager : ViewAcceptedRegistrations()
+    end
+    group Registration For User
+Registrations <[#blue]- RestaurantOwnerHome : GetRegistrationId(UserId)
+Registration <[#blue]- Registrations : GetRegistrationIdForUser(UserId)
+Registration <[#green]- Registration : SelectIdByUser(UserId)
+Registrations <[#red]- Registration : RegistrationId
+Registrations -[#red]> RestaurantOwnerHome : RegistrationId
+Registration <[#blue]- RestaurantOwnerHome : GetRegistrationStatus(RegistationId)
+Registration -[#red]> RestaurantOwnerHome : RegistrationStatus
+RestaurantOwnerHome <[#green]- RestaurantOwnerHome : ViewRegistrationStatus()
+    end
+
+
+@enduml
