@@ -43,7 +43,7 @@ Restaurant -[#green]> Restaurant : StopOrder()
     end note
 Restaurant -[#blue]> Order : SetOrderStatus(ACCEPTED)
 
-Restaurant -[#green]> Restaurant : MakeOrder()
+Restaurant -[#green]> Restaurant : MakingOrder()
 Restaurant -[#blue]> Order : SetEstimatedDeliveryTime(datetime)
     end
     group Deliver Order

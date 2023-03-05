@@ -52,6 +52,12 @@ class Restaurant {
     - bool OrderShipped()
     - bool OrderDelivered()
     - bool WasCodCollected()
+    - OrderStatus AcceptRejectOrder()
+    - OrderStatus StopOrder()
+    - bool IsOrderReady()
+    - void NotifyDeliveryDriver()
+    - bool IsOrderInTransit()
+    - bool IsOrderDelivered()
     + RestaurantData GetRestaurantData(RestaurantId)
     + int GetAverageDeliveryTime(RestaurantId)
     + void AddActiveOrder(OrderId)
@@ -188,6 +194,8 @@ class Order {
     # OrderStatus : enum
     # PaymentId: string
     # PaymentStatus: string
+    - bool CanCancelOrder()
+    - OrderStatus UpdateConsumerOrderStatus()
     + OrderId CreateOrder(ConsumerId, RestaurantId)
     + void DiscountCode(string)
     + void SubmitOrder(OrderId, PaymentId)
@@ -212,7 +220,7 @@ abstract class OrderData {
     # Tip: float
     # DeliveryFee: float
     # TotalCost: float
-    # DiscountCode: string
+    # Discount: Discount
     # DiscountAmount: float
     # EstimatedDeliveryTime: datetime
     # DeliveryTimeMinutes: int
@@ -261,17 +269,37 @@ enum RefundStatus {
     DENIED
 }
 
+class ApplicationManager {
+    + UserId: string
+    + AccountId: string
+    - OrderId OrderIdFromRefundData(RefundData)
+    - void RefundToConsumer(bool)
+    - ArrayList<RegistrationId> FindNewRegistrations()
+    - RegistrationStatus AcceptRejectRegistrations()
+    - void ViewOpenRegistrations()
+    - void ViewRejectedRegistrations()
+    - void ViewAcceptedRegistrations()
+}
+
 class RestaurantOwner {
     + UserId: string
     + AccountId: string
     + RestaurantList: ArrayList<RestaurantId>
+    - void VerifyRegistrationStatus()
 }
 
 class Consumer {
     + UserId: string
     + AccountId: string
     + OrderList: ArrayList<OrderId>
-    + void Update()
+    - void SelectOrderId()
+    - RestaurantId SelectRestaurant()
+    - void ViewRating()
+    - void ViewPopularity()
+    - void ViewAverageDeliveryTime()
+    - void ViewMenuItems()
+    - void EditCart()
+    - void ReviewOrder()
 }
 
 class Registrations {
