@@ -4,10 +4,10 @@ footer Page %page% of %lastpage%
 
 title: Food Delivery Application - Order from Restaurant
 
-actor RestaurantOwner
+actor Restaurant1
 
-participant Home [
-    = Home
+participant RestaurantOwner [
+    = RestaurantOwner
 ]
 
 participant Restaurant [
@@ -22,14 +22,14 @@ participant Order [
     = Order
 ]
 
-RestaurantOwner -> Home : SignIn()
+Restaurant1 -> RestaurantOwner : SignIn()
     group New Order
 Orders -[#blue]> Restaurant : NotifyNewOrder()
-Home -[#blue]> Restaurant : GetNewOrder()
-Restaurant -[#red]-> Home : OrderId
-Home -[#blue]> Order : GetOrder(OrderId)
-Order -[#red]-> Home : OrderId
-Home -[#blue]> Restaurant : ProcessNewOrder(OrderId)
+RestaurantOwner -[#blue]> Restaurant : GetNewOrder()
+Restaurant -[#red]-> RestaurantOwner : OrderId
+RestaurantOwner -[#blue]> Order : GetOrder(OrderId)
+Order -[#red]-> RestaurantOwner : OrderId
+RestaurantOwner -[#blue]> Restaurant : ProcessNewOrder(OrderId)
 Restaurant -[#blue]> Order : GetPaymentStatus(OrderId)
 Order -[#red]-> Restaurant : PaymentStatus
 Restaurant -[#green]> Restaurant : AcceptRejectOrder()

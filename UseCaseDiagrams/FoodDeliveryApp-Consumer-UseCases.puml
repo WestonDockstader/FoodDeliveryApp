@@ -1,0 +1,55 @@
+@startuml
+header Learn and Design 2023 - POD 1
+footer Page %page% of %lastpage%
+title: Food Delivery Application - Use Case Diagram
+
+skinparam actorStyle awesome
+
+left to right direction
+
+actor Consumer #blue;line:blue
+
+Package Restaurant {
+    Consumer -[#blue]-> (Restaurant)
+    Consumer -[#blue]-> (Restaurants)
+    (Restaurants) .> (Restaurant) : includes
+    Consumer -[#blue]-> (Find Restaurant)
+    Consumer -[#blue]-> (Select Restaurant)
+    (Find Restaurant) .> (Restaurant) : extends
+    (Select Restaurant) .> (Restaurant) : extends
+}
+Package Menu {
+    Consumer -[#blue]-> (Menu)
+    Consumer -[#blue]-> (View Menu Items)
+    Consumer -[#blue]-> (Select Menu Items)
+    (View Menu Items) .> (Menu) : extends
+    (Select Menu Items) .> (Menu) : extends
+}
+
+Package Cart {
+    Consumer -[#blue]-> (Cart)
+    Consumer -[#blue]-> (Add Items to Cart)
+    Consumer -[#blue]-> (Edit Cart)
+    (Add Items to Cart) .> (Cart) : extends
+    (Edit Cart) .> (Cart) : extends
+
+}
+Package Order {
+    Consumer -[#blue]-> (Order)
+    Consumer -[#blue]-> (Orders)
+    (Orders) .> (Order) : includes
+    Consumer -[#blue]-> (Submit Order)
+    Consumer -[#blue]-> (Cancel Order)
+    Consumer -[#blue]-> (Payment)
+    (Submit Order) .> (Order) : extends
+    (Cancel Order) .> (Order) : extends
+}
+package Refund {
+    Consumer -[#blue]-> (Refund)
+    Consumer -[#blue]-> (Request Refund)
+    Consumer -[#blue]-> (Process Refund)
+    (Request Refund) .> (Refund) : extends
+    (Process Refund) .> (Refund) : extends
+}
+
+@enduml

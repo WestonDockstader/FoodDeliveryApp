@@ -1,0 +1,29 @@
+@startuml
+header Learn and Design 2023 - POD 1
+footer Page %page% of %lastpage%
+title: Food Delivery Application - Use Case Diagram
+
+left to right direction
+
+skinparam actorStyle awesome
+
+actor Consumer #blue;line:blue
+actor RestaurantOwner #orange;line:orange
+actor ApplicationManager #purple;line:purple
+
+rectangle Refund {
+    together {
+        Consumer -[#blue]-> (Request Refund)
+        Consumer -[#blue]-> (View Refund)
+    }
+    together {
+        (Refund Notification) <-[#purple]- ApplicationManager
+        (Process Refund) <-[#purple]- ApplicationManager
+        (Notify Refund Requested) <-[#purple]- ApplicationManager
+    }
+    together {
+        RestaurantOwner  -[#orange]-> (Notify Refund Requested)
+        RestaurantOwner  -[#orange]-> (Acknowledge Refund)
+    }
+}
+@enduml
