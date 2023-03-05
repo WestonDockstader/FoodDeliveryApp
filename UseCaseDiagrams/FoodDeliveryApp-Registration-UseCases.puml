@@ -13,6 +13,7 @@ actor RestaurantOwner #orange;line:orange
 
 package Registration {
     (Create New Registration) <-[#orange]- RestaurantOwner
+    ApplicationManager -[#purple]-> (Create New Registration)
     (Registrations By Owner) <-[#orange]- RestaurantOwner
 
     ApplicationManager -[#purple]-> (Process New Registration)
