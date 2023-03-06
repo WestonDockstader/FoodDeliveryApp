@@ -1,0 +1,79 @@
+@startuml 
+
+title Food Delivery Application\nRestuarant Owner Sequence Diagram
+
+actor RestaurantOwner
+
+participant System as System 
+participant RestaurantList as RestaurantList
+participant Menu as Menu
+participant Item as Item
+participant Order as Order 
+participant Payment as Payment 
+
+group Request Registration
+    RestaurantOwner -[#blue]> System : Request Registration
+    activate System
+        System -[#red]-> ApplicationManager : Send Registration Request
+        ApplicationManager -[#blue]> System : Request Response
+        System -[#green]> System : ApproveRegistration()
+            activate RestaurantList
+            System -[#blue]> RestaurantList : Update Restaurant List
+            System -[#red]-> RestaurantOwner : Send Registration Response
+end /'End Request Registration'/
+
+group View Registration
+        ApplicationManager -[#blue]> System : Get All Registrations
+        System -[#red]-> ApplicationManager : Send All Registrations
+end /'End View Regisration'/
+
+group Create Menu Items
+    RestaurantOwner -[#blue]> Item : Get Menu Items
+    activate Item
+    Item -[#green]> Item : ValidateOwner()
+    Item -[#red]-> RestaurantOwner : Return Menu Items
+    RestaurantOwner -[#blue]> Item : Update Menu Item
+    Item -[#green]> Item : StoreItem()
+    Item -[#green]> Item : EditItem()
+    Item -[#green]> Item : DeleteItem()
+    Item -[#red]-> RestaurantOwner : Return Menu Items
+end /'Create Menu Items'/
+
+group Create Menu
+    RestaurantOwner -[#blue]> RestaurantList : Get Restaurants
+    RestaurantList -[#green]> RestaurantList : ValidateOwner()
+    RestaurantList -[#red]-> RestaurantOwner : Return Restaurants
+    RestaurantOwner -[#green]> RestaurantOwner : Select Restaurant
+    RestaurantOwner -[#blue]> Item : Get Menu Items
+    Item -[#red]-> RestaurantOwner : Return Menu Items
+    deactivate Item
+    RestaurantOwner -[#blue]> Menu : Create Menu(RestaurantId,MenuItems)
+    activate Menu
+    Menu -[#red]-> RestaurantOwner : Return Menu
+    deactivate Menu
+end /'Create Menu'/
+
+group Notification Service
+    System -[#red]-> RestaurantOwner : Send Order Notifications
+    RestaurantOwner -[#green]> RestaurantOwner : AcceptRejectOrder()
+    RestaurantOwner -[#blue]> System : Send Response
+    alt OrderAccepted
+        RestaurantOwner -[#blue]> Order : Update Order
+        activate Order
+        Order -[#red]-> RestaurantList : Return Order 
+        deactivate Order
+        RestaurantList -[#green]> RestaurantList : CalculateDeliveryTime()
+        RestaurantList -[#red]-> System : Return Delivery Time
+        deactivate RestaurantList 
+        deactivate System
+    else OrderDeclined
+    end
+end
+
+group Update Orders
+    RestaurantOwner -[#blue]> Order : Update Order
+    Order -[#green]> Order : UpdateOrderStatus()
+    Order -[#red]-> RestaurantOwner : Return Order
+end
+
+@enduml 

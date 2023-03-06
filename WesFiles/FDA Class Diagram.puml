@@ -1,0 +1,109 @@
+@startuml 
+
+title Food Delivery Application\nClass Diagram
+
+class User {
+    field : String
+    method()
+}
+
+class RestaurantList {
+    RestaurantListID : Integer
+    RestaurantList : Restaurant[]
+    getRestaurantList()
+    FilterList()
+
+}
+    /'
+    FilterLocation()
+    FilterVeg/Non-Veg()
+    FilterRating()
+    FilterMostPopular()
+    FilterDeliveryTime()
+    '/
+
+class Restaurant {
+    RestaurantID : Integer
+    OwnerID : Integer
+    Location : String
+    IsNonVeg : Bool
+    Rating : Integer
+    Popularity : PopularityRating
+    Registration : RegisrationStatus
+    GetDeliveryTime() : Datetime
+    GetMenu()
+}
+
+class Menu {
+    MenuID : Integer
+    RestaurantID : Integer
+    CreateCart()
+    AddItemToCart(ItemID)
+}
+
+class Cart {
+    CartID : Integer
+    UserID : Integer
+    RestaurantID : Integer
+    CartInstructions : String
+    CartItems : Item[]
+    CalculateSubTotal(CartItems) : Double
+    CreateOrder(Cart)
+}
+
+class Order {
+    OrderID : Integer
+    UserID : Integer
+    RestaurantID : Integer
+    OrderItems : CartItems
+    ValidateDiscount()
+    ApplyDiscount()
+    CalculateTax()
+    CalculateDeliveryFee()
+    CalculateTotal(OrderItems,CalculateTax(),ApplyDiscount())
+}
+
+class Payment {
+    PaymentID : Integer
+    UserID : Integer
+    RestaurantID : Integer
+    OrderID : Integer
+    PaymentType : PaymentType
+    Total : Double
+    SubTotal : Double
+    Tax : Double
+    DeliveryFee : Double
+    SubmitPayment()
+    InitiateOrder(OrderID)
+    GetOrders(UserID)
+}
+
+class Reciept {
+    RecieptID : Integer
+    PaymentID : Integer
+    UserID : Integer
+    RestaurantID : Integer
+    OrderID : Integer
+    PaymentType : PaymentType
+    Total : Double
+    SubTotal : Double
+    Tax : Double
+    DeliveryFee : Double
+}
+
+
+
+
+
+/'
+class Permission {
+    field : String
+    method()
+}
+
+class Item {
+    field : String
+    method()
+}
+'/
+@enduml 
