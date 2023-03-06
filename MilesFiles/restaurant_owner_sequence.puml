@@ -1,0 +1,100 @@
+@startuml
+header Learn and Design 2023 - POD 1
+footer Page %page% of %lastpage%
+
+title: Food Delivery Application - RestaurantOwner Registration
+
+actor Consumer
+actor ApplicationManager
+actor RestaurantOwner
+
+participant RestaurantOwnerView [
+    = RestaurantOwnerView
+]
+
+participant Registration [
+    = Registration
+]
+
+participant Menu [
+    = Menu
+]
+
+participant Items [
+    = Items
+]
+
+participant Orders [
+    = Orders
+]
+
+participant Refund [
+    = Refund
+]
+
+participant Payment [
+    = Payment
+]
+
+group Authenticate
+  RestaurantOwner -[#blue]> RestaurantOwnerView : SignIn()
+  activate RestaurantOwnerView
+    RestaurantOwnerView -[#green]> RestaurantOwnerView : evaluateRole()
+end
+
+group Manage Registration
+  RestaurantOwnerView -[#blue]> Registration : createRegistration(registrationInfo)
+  activate Registration
+    Registration -[#red]->  ApplicationManager : registrationNotification(registrationInfo)
+    ApplicationManager -[#blue]> Registration : updateRegistrationStatus(registrationId, registrationStatus)
+    RestaurantOwnerView -[#blue]> Registration : getRegistrationStatus(restaurantOwnerId)
+  deactivate Registration
+end
+
+group Manage Menu
+  RestaurantOwnerView -[#blue]> Items : createItem(itemInfo)
+  activate Items
+  activate Menu
+  RestaurantOwnerView -[#blue]> Menu : addItems(itemIds)
+  RestaurantOwnerView -[#blue]> Menu : removeItemFromMenu(itemId)
+  RestaurantOwnerView -[#blue]> Items : editItem(itemInfo)
+  RestaurantOwnerView -[#blue]> Items : deleteItem(itemId)
+end
+
+note left
+  [registrationStatus === approved]
+end note
+
+group View Menu
+  RestaurantOwnerView -[#blue]> Menu : getMenu(restaurantOwnerId)
+  Menu -[#blue]> Items : getItems(menuId, restaurantOwnerId)
+  deactivate Items
+  Menu -[#red]-> RestaurantOwnerView : menu
+  deactivate Menu
+end
+
+group Manage Orders
+  RestaurantOwnerView -[#blue]> Orders : getOrders(restaurantOwnerId)
+  activate Orders
+    RestaurantOwnerView -[#green]> RestaurantOwnerView : selectOrder(orderId)
+    RestaurantOwnerView -[#blue]> Orders : updateOrderStatus(orderId, statusId)
+end
+
+
+group Refund
+  Consumer -[#blue]> Refund : requestRefund(orderId)
+  activate Refund
+    RestaurantOwnerView -[#blue]> Refund : acknowledgeRefund(orderId, refundStatus)
+    Refund -[#red]-> ApplicationManager : refundNotification
+    ApplicationManager -[#blue]> Refund : initiateRefund(orderId)
+    Refund -[#blue]> Payment : processRefund(orderId)
+    Payment -[#green]> Payment : processPayment(orderId)
+    Payment -[#red]-> Refund : PaymentStatus
+    Refund -[#red]-> Orders : RefundStatus
+    Orders -[#red]-> RestaurantOwnerView : OrderStatus
+  deactivate RestaurantOwnerView
+  deactivate Orders
+  deactivate Refund
+end
+
+@enduml

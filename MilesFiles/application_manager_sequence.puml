@@ -1,0 +1,78 @@
+@startuml Application Manager
+  header Learn and Design 2023 - POD 1
+  footer Page %page% of %lastpage%
+
+  title: Food Delivery Application - Application Manager
+
+  actor ApplicationManager
+
+  participant ManagerView [
+      = Manager View
+  ]
+
+  participant Registrations [
+      = Registrations
+  ]
+
+  participant RegistrationStatus [
+      = RegistrationStatus
+  ]
+
+  participant Orders [
+      = Orders
+  ]
+
+  participant OrderStatus [
+      = OrderStatus
+  ]
+
+  participant Restaurant [
+      = Restaurant
+  ]
+
+  participant Payment [
+      = Payment
+  ]
+
+  participant PaymentStatus [
+      = PaymentStatus
+  ]
+' Simplify statuses 
+  group Authenticate
+    ApplicationManager -[#blue]> ManagerView : SignIn()
+    ManagerView -[#green]> ManagerView : evaluateRole()
+  end
+
+  group Manage Registrations
+    ManagerView -[#blue]> Registrations : GetRegistrations()
+    Registrations -[#red]-> ManagerView : Registrations
+    ManagerView -[#green]> ManagerView : ViewRegistration()
+    ManagerView -[#blue]-> Restaurant : GetRestaurantInfo()
+    Restaurant -[#red]-> ManagerView : RestaurantInfo
+    ManagerView -[#blue]> Registrations : UpdateRegistrationStatus()
+    Registrations -[#blue]> RegistrationStatus : UpdateRegistrationStatus()
+    ' Restaurant -[#red]> Registrations : Success
+    Registrations -[#red]> ManagerView : Updated Registrations
+  end
+
+  group Manage Flagged Orders
+    ManagerView -[#blue]> Orders : GetFlaggedOrders()
+    Orders -[#red]-> ManagerView : FlaggedOrders
+    group Offline Flagged Order
+      ManagerView -[#blue]> Orders : FindOrder()
+      Orders -[#red]-> ManagerView : FlaggedOrder
+    end
+    ManagerView -[#green]> ManagerView : ViewOrder()
+    ManagerView -[#green]> ManagerView : InitiateRefund()
+    ManagerView -[#blue]> OrderStatus : InitiateRefund()
+    OrderStatus -[#blue]> Payment : InitiateRefund()
+    Payment -[#green]> Payment : ProcessPayment()
+    Payment -[#blue]> PaymentStatus : UpdateStatus()
+    PaymentStatus -[#red]> Payment : Success
+    Payment -[#red]> OrderStatus : Success
+    OrderStatus -[#red]> Orders : Success 
+    Orders -[#red]> ManagerView : Updated Flagged Orders
+
+  end
+
+@enduml

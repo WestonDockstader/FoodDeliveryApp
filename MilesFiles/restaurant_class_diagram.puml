@@ -1,0 +1,150 @@
+@startuml
+header Learn and Design 2023 - POD 1
+footer Page %page% of %lastpage%
+
+title: Food Delivery Application - Class Diagram
+
+
+abstract class User {
+    #Id: string
+    #FirstName: string
+    #LastName: string
+    #EmailAddress: string
+    #UserName: string
+    #Password: string
+    #Role: enum
+    #Active: bool
+}
+
+abstract class Address {
+    #Id: string
+    #StreetAddress: string
+    #City: string
+    #State: string
+    #Zipcode: string
+    Validate(): bool
+}
+
+abstract class Registration {
+    #Id: string
+    #UserId: string
+    #AddressId: string
+    #AccountType: string
+    #ApprovalStatus: string
+    #Active: bool
+} 
+
+class Restaurant {
+    #Id: string
+    #RestaurantOwnerId: string
+    #Name: string
+    #AddressId: string
+    #Cuisine: ArrayList<string>
+    #Vegetarian: bool
+    #NonVegtarian: bool
+    #ApprovalStatus: enum
+    #Rating: Rating
+    #Popularity: PopularityRating
+    #CalculateDeliveryTime(): float
+}
+
+class MenuItem {
+    #Id: string
+    #Name: string
+    #Type: string
+    #Description: string
+    #Vegetarian: bool
+    #Price: float
+}
+
+class OrderMenuItem {
+    #CareInstructions: string
+    #MenuItemId: string
+}
+
+abstract class Menu {
+    #Id: string
+    #RestaurantId: string
+    #MenuItems: ArrayList<MenuItemId>
+}
+
+abstract class Payment {
+    #Id: string
+    #PaymentTypeName: string
+    #AccountHolderName: string
+    #BillingAddressId: string
+    #AccountNumber: string
+    #Currency: string
+    #Type: string
+}
+
+abstract class OrderStatus {
+    #Id: string
+    #OrderId: string
+    #OrderStatus: enum
+}
+
+class PaymentStatus {
+    #Id: string
+    #PaymentId: string
+    #OrderId: string
+    #PaymentStatus: enum
+    + bool ProcessPayment()
+}
+
+class Cart {
+    #Id: string
+    #ConsumerId: string
+    #Items: ArrayList<OrderMenuItemId>
+}
+
+class Order {
+    #Id: string
+    #RestaurantId: string
+    #ConsumerId: string
+    #DeliveryAddressId: string
+    #CreationDateTime: datetime
+    #Items: ArrayList<OrderMenuItemId>
+    #PaymentId: string
+    +CalculateTotalItemCost(): float
+    +CalculateTax(): float
+    +Tip(): float
+    +CalculateDeliveryFee(): float
+    +CalculateTotalCost(): float
+    #OrderStatus: OrderStatus
+    #PaymentStatus: PaymentStatus
+}
+
+
+abstract class Refund {
+    #Id: string
+    #OrderId: string
+    #SubmitDateTime: datetime
+    #RefundStatus: string
+}
+
+class ApplicationManager {
+    +PendingApprovals: ArrayList<AccountId>
+    +PendingRefunds: ArrayList<Refund>
+}
+
+class RestaurantOwner {
+    +AddressId: string
+    +RestaurantId: string
+    +ActiveOrders: ArrayList<Order>
+    +CompletedOrders: ArrayList<Order>
+    +ActiveRefunds: ArrayList<Refund>
+    +CompletedRefunds: ArrayList<Refund>
+}
+
+class Consumer {
+    +AddressId: string
+    +Orders: ArrayList<Order>
+    +AddressId: string
+}
+
+OrderMenuItem <|-- MenuItem
+ApplicationManager <|-- User
+RestaurantOwner <|-- User
+Consumer <|-- User
+@enduml
