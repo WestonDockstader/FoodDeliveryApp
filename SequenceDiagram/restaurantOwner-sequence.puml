@@ -1,0 +1,61 @@
+@startuml
+header Learn and Design 2023 - POD 1
+footer Page %page% of %lastpage%
+
+title: Food Delivery Application - Order from Restaurant
+
+actor Restaurant1
+
+participant RestaurantOwner [
+    = RestaurantOwner
+]
+
+participant Restaurant [
+    = Restaurant
+]
+
+participant Orders [
+    = Orders
+]
+
+participant Order [
+    = Order
+]
+
+Restaurant1 -> RestaurantOwner : SignIn()
+    group New Order
+Orders -[#blue]> Restaurant : NotifyNewOrder()
+RestaurantOwner -[#blue]> Restaurant : GetNewOrder()
+Restaurant -[#red]-> RestaurantOwner : OrderId
+RestaurantOwner -[#blue]> Order : GetOrder(OrderId)
+Order -[#red]-> RestaurantOwner : OrderId
+RestaurantOwner -[#blue]> Restaurant : ProcessNewOrder(OrderId)
+Restaurant -[#blue]> Order : GetPaymentStatus(OrderId)
+Order -[#red]-> Restaurant : PaymentStatus
+Restaurant -[#green]> Restaurant : AcceptRejectOrder()
+    note left
+        UNPAID orders are DECLINED
+    end note
+Restaurant -[#blue]> Order : SetOrderStatus(DECLINED)
+Restaurant -[#green]> Restaurant : StopOrder()
+    note left
+        PAID or COD orders are ACCEPTED
+    end note
+Restaurant -[#blue]> Order : SetOrderStatus(ACCEPTED)
+
+Restaurant -[#green]> Restaurant : MakingOrder()
+Restaurant -[#blue]> Order : SetEstimatedDeliveryTime(datetime)
+    end
+    group Deliver Order
+Restaurant -[#green]> Restaurant : IsOrderReady()
+Restaurant -[#green]> Restaurant : NotifyDeliveryDriver()
+Restaurant -[#green]> Restaurant : IsOrderInTransit()
+Restaurant -[#blue]> Order : SetOrderStatus(SHIPPED)
+Restaurant -[#green]> Restaurant : WasCodCollected()
+    note left
+        If PaymentStatus is COD.
+    end note
+Restaurant -[#green]> Restaurant : IsOrderDelivered()
+Restaurant -[#blue]> Order : SetOrderStatus(DELIVERED)
+    end
+@enduml

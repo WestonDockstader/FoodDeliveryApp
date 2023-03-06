@@ -1,0 +1,92 @@
+@startuml
+header Learn and Design 2023 - POD 1
+footer Page %page% of %lastpage%
+
+title: Food Delivery Application - Refund Order
+
+actor Consumer1
+
+participant Consumer [
+    = Consumer
+]
+
+participant Orders [
+    = Orders
+]
+
+participant Order [
+    = Order
+]
+
+participant Refund [
+    = Refund
+]
+
+participant Refunds [
+    = Refunds
+]
+
+participant ApplicationManager [
+    = ApplicationManager
+]
+
+participant RestaurantOwner [
+    =  RestaurantOwner
+]
+
+actor AppManager1
+actor Restaurant1
+
+
+Consumer1 -> Consumer : SignIn()
+ApplicationManager <- AppManager1 : SignIn()
+    group Request Refund
+Consumer -[#blue]> Orders : GetOrderHistory()
+Consumer <[#red]- Orders : ArrayList<OrderId>
+Consumer -[#green]> Consumer : SelectOrderId()
+Consumer -[#blue]> Refund : CreateRefund(OrderId)
+Consumer <[#red]- Refund : RefundStatus
+        note left
+        enum RefundStatus
+          REQUESTED
+          APPROVED
+          DENIED
+        end note
+    end
+    group Refund Notification
+Refund -[#blue]> Refunds : AddRefund(OrderId)
+Refunds -[#blue]> ApplicationManager : NotifyNewRefund(RefundId)
+    end
+    group Notify Refund Requested
+Refunds <[#blue]- ApplicationManager : GetRefund(RefundId)
+Refunds -[#red]> ApplicationManager : RefundId
+Refunds <[#blue]- ApplicationManager : GetRefundData(RefundId)
+Refunds -[#red]> ApplicationManager : RefundData
+ApplicationManager -[#green]> ApplicationManager : OrderIdFromRefundData()
+Order <[#blue]- ApplicationManager : GetOrderStatus(OrderId)
+Order -[#red]> ApplicationManager : OrderStatus
+ApplicationManager -[#blue]> RestaurantOwner : NotifyRefundRequest(OrderId)
+    end
+    group Acknowledge Refund
+RestaurantOwner <- Restaurant1 : SignIn()
+Order <[#blue]- RestaurantOwner : SetRefundable(OrderId, bool)
+Order -[#blue]> ApplicationManager : AcknowledgeRefundable(bool)
+        note left
+          True  = Restaurant Owner Acknowledged Order is refundable.
+          False = Restaurant Owner Acknowledged Order is not refundable.
+        end note
+    end
+    group Process Refund
+ApplicationManager -[#green]> ApplicationManager : RefundToConsumer(bool)
+        note left
+          True  = Application Manger refunds payment to Consumer.
+          False = Application Manger does not refund payment to Consumer.
+        end note
+Refund <[#blue]- RestaurantOwner : SetRefundStatus(RefundId, RefundStatus)
+    end
+    group View Refund
+Consumer -[#blue]> Refund: GetRefundStatus(OrderId)
+Consumer <[#red]- Refund : RefundStatus
+    end
+
+@enduml

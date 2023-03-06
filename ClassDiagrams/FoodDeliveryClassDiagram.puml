@@ -1,0 +1,365 @@
+@startuml
+header Learn and Design 2023 - POD 1
+footer Page %page% of %lastpage%
+title: Food Delivery Application - Class Diagram
+
+abstract class User {
+    # Id: string
+    # FirstName: string
+    # LastName: string
+    # EmailAddress: string
+    # UserName: string
+    # Password: string
+    # Role: string
+    # Active: bool
+}
+
+abstract class Address {
+    # Id: string
+    # UserID: string
+    # StreetAddress: string
+    # City: string
+    # State: string
+    # Zipcode: string
+}
+
+abstract class Account {
+    # Id: string
+    # UserId: string
+    # AccountName: string
+    # AddressId: string
+    # AccountType: string
+    # Active: bool
+}
+
+class Restaurants {
+    + RestaurantList: ArrayList<RestaurantId>
+    + void AddNewRestaurant()
+    + ArrayList<RestaurantId> GetRestaurants()
+}
+
+class Restaurant {
+    + RestaurantId: string
+    + RestaurantData: RestaurantData
+    + MenuId: string
+    + ActiveOrders: ArrayList<OrderId>
+    + CompletedOrders: ArrayList<OrderId>
+    - void ProcessActiveOrders()
+    - void UpdateCompletedOrders()
+    - bool IsPaymentApproved()
+    - void AcceptDeclineOrder()
+    - bool MakingOrder()
+    - bool OrderShipped()
+    - bool OrderDelivered()
+    - bool WasCodCollected()
+    - OrderStatus AcceptRejectOrder()
+    - OrderStatus StopOrder()
+    - bool IsOrderReady()
+    - void NotifyDeliveryDriver()
+    - bool IsOrderInTransit()
+    - bool IsOrderDelivered()
+    + RestaurantData GetRestaurantData(RestaurantId)
+    + int GetAverageDeliveryTime(RestaurantId)
+    + void AddActiveOrder(OrderId)
+    + OrderId GetOrder()
+    + OrderStatus ProcessNewOrder(OrderId)
+    + void NotifyNewOrder()
+    + string GetId()
+    + int GetPopularity()
+    + string Rating()
+}
+
+abstract class RestaurantData {
+    # Id: string
+    # AccountId: string
+    # ApprovalStatus: string
+    # Name: string
+    # Address: object
+    # Cuisine: string
+    # Vegetarian: bool
+    # NonVegtarian: bool
+    # ApprovalStatus: string
+    # Rating: string
+    # Popularity: int
+    # AverageDeliveryTime: int
+    # Menus: ArrayList<MenuId>
+}
+
+
+abstract class MenuItemData {
+    # RestaurantId: string
+    # Name: string
+    # Type: string
+    # Description: string
+    # Vegetarian: bool
+    # Price: float
+    + MenuItemId CreateMenuItem()
+}
+
+class Menu {
+    + Id: string
+    + MenuDataId: string
+    + void CreateMenu(ArrayList<MenuItemId>)
+    + MenuDataId GetMenu()
+    + void SelectMenuItem(MenuItemId)
+}
+
+class MenuItem {
+    # Id: string
+    # MenuData: MenuData
+    + MenuItemId GetMenuItem()
+}
+
+enum MenuType {
+    BREAKFAST
+    LUNCH
+    DINNER
+}
+
+class Payments {
+    # PaymentList: ArrayList<PaymentId>
+    + void AddNetPayment(PaymentId)
+    + ArrayList<PaymentId> GetPayments()
+}
+
+class Payment {
+    # Id: string
+    # OrderId: string
+    # PaymentData: PaymentData
+    + PaymentId CreatePayment(OrderId, PaymentData)
+    + PaymentStatus ProcessPayment(PaymentId)
+    + PaymentId GetPaymentId(OrderId)
+    + PaymentData GetPaymentData(PaymentId)
+    + void CodCollected(OrderId, PaymentId)
+}
+
+abstract class PaymentData {
+    # Id: string
+    # PaymentDate: datetime
+    # IsCod: bool
+    # BillingAddressId: string
+    # AccountNumber: string
+    # Currency: string
+    # Type: string
+    # AccountHolderName: string
+    # PaymentStatus: enum
+}
+
+enum PaymentStatus {
+    UNPAID
+    PAID
+    COD
+}
+
+abstract class CartItem {
+    # Id: string
+    # MenuItemId: string
+    # Quantity: int
+    # TotalCost: float
+    # Instructions: string
+    + void SetQuantity(int)
+    + void SetItemCost(float)
+    + void SetInstructions(string)
+}
+
+class Cart {
+    # Id: string
+    # ConsumerId: string
+    # Items: ArrayList<CartItemId>
+    + CartItemId CreateCartItem(MenuItemId)
+    + void AddCartItem(CartItemId)
+    + void RemoveCartItem(CartItemId)
+}
+
+abstract class Discount {
+    # Id: string
+    # Code: string
+    # DiscountType: enum
+}
+
+class Orders {
+    + OrderList: ArrayList<OrderId>
+    + void AddNewOrder()
+    + OrderId GetNewOrder()
+    + ArrayList<OrderId> GetOrderHistory()
+    - ArrayList<OrderId> FindNewOrders()
+    - ArrayList<OrderId> FindHistoricOrders()
+}
+
+class Order {
+    # OrderId: string
+    # RestaurantId: string
+    # ConsumerId: string
+    # OrderData: OrderData
+    # OrderStatus : enum
+    # PaymentId: string
+    # PaymentStatus: string
+    - bool CanCancelOrder()
+    - OrderStatus UpdateConsumerOrderStatus()
+    + OrderId CreateOrder(ConsumerId, RestaurantId)
+    + void DiscountCode(string)
+    + void SubmitOrder(OrderId, PaymentId)
+    + OrderStatus GetOrderStatus()
+    + void SetOrderStatus(OrderId, OrderStatus)
+    + string GetOrderId()
+    + void SetEstimatedDeliveryTime()
+    + PaymentStatus GetPaymentStatus()
+    + OrderStatus CancelOrder(OrderId)
+    + void SetRefundable(OrderId, bool)
+}
+
+abstract class OrderData {
+    # RestaurantId: string
+    # AccountId: string
+    # DeliveryAddressId: string
+    # CreationDateTime: datetime
+    # DeliveredDateTime: datetime
+    # Items: ArrayList<CartItemId>
+    # SubTotalItemCost: float
+    # Tax: float
+    # Tip: float
+    # DeliveryFee: float
+    # TotalCost: float
+    # Discount: Discount
+    # DiscountAmount: float
+    # EstimatedDeliveryTime: datetime
+    # DeliveryTimeMinutes: int
+    # Refundable: bool
+}
+
+enum OrderStatus {
+    ACCEPTED
+    DECLINED
+    DELIVERED
+    INPROCESS
+    RECEIVED
+    SHIPPED
+    SUBMITTED
+}
+
+class Refunds {
+    + RefundList: ArrayList<RefundId>
+    + void AddRefund(OrderId)
+    + RefundId GetRefund(RefundId)
+    + ArrayList<RefundId> GetRefundHistory()
+    - ArrayList<RefundId> FindNewNewRefund()
+    - ArrayList<RefundId> FindHistoricRefunds()
+}
+
+abstract class Refund {
+    # Id: string
+    # RefundId: string
+    # RefundData: RefundData
+    + RefundStatus CreateRefund(OrderId)
+    + RefundId GetRefundId(OrderId)
+    + RefundData GetRefundData(RefundId)
+    + void SetRefundStatus(OrderId, RefundStatus)
+    + RefundStatus GetRefundStatus(OrderId)
+}
+
+abstract class RefundData {
+    # OrderId: string
+    # SubmitDateTime: datetime
+    # RefundStatus: string
+}
+
+enum RefundStatus {
+    REQUESTED
+    APPROVED
+    DENIED
+}
+
+class ApplicationManager {
+    + UserId: string
+    + AccountId: string
+    - OrderId OrderIdFromRefundData(RefundData)
+    - void RefundToConsumer(bool)
+    - ArrayList<RegistrationId> FindNewRegistrations()
+    - RegistrationStatus AcceptRejectRegistrations()
+    - void ViewOpenRegistrations()
+    - void ViewRejectedRegistrations()
+    - void ViewAcceptedRegistrations()
+}
+
+class RestaurantOwner {
+    + UserId: string
+    + AccountId: string
+    + RestaurantList: ArrayList<RestaurantId>
+    - void VerifyRegistrationStatus()
+}
+
+class Consumer {
+    + UserId: string
+    + AccountId: string
+    + OrderList: ArrayList<OrderId>
+    - void SelectOrderId()
+    - RestaurantId SelectRestaurant()
+    - void ViewRating()
+    - void ViewPopularity()
+    - void ViewAverageDeliveryTime()
+    - void ViewMenuItems()
+    - void EditCart()
+    - void ReviewOrder()
+}
+
+class Registrations {
+    # Registrations: ArrayList<RegistrationId>
+    + void AddNewRegistration(RegistrationId)
+    + void DeleteRegistration(RegistrationId)
+    + ArrayList<RegistrationId> GetRegistrations()
+    + RegistrationId GetRegistrationId(UserId)
+}
+
+class Registration {
+    # Id: string
+    # UserId: string
+    # RegistrationData: RegistrationData
+    # Resturants: ArrayList<RestaurantId>
+    - RestaurantId LookupRestaurant(UserId)
+    - void AddRestaurants(RestaurantId)
+    - RegistrationId SelectIdByUser(UserId)
+    - void SetCreationDate()
+    + RegistrationId CreateRegistration(UserId)
+    + RegistrationId GetRegistrationIdForUser(UserId)
+    + RegistrationStatus GetRegistrationStatus(RegistrationId)
+    + void NotifyNewRegistration()
+    + void SetRegistrationStatus(RegistrationId, RegistrationStatus)
+    + Restaurant GetRestaurantInfo(UserId)
+    + string GetRestaurantUserId()
+}
+
+abstract class RegistrationData {
+    # RequestingUserId: string
+    # CreationDate: datetime
+    # RegistrationStaus: enum
+
+}
+
+enum RegistrationStatus {
+    OPEN
+    REJECTED
+    ACCEPTED
+}
+
+
+ApplicationManager <|-- Account
+RestaurantOwner <|-- Account
+Consumer <|-- Account
+Account <|-- User
+User <|-- Address
+Restaurants <|-- Restaurant
+Restaurant <|-- RestaurantData
+MenuItem <|-- MenuItemData
+Menu <|-- MenuItem
+Orders<|-- Order
+Order <|-- OrderData
+OrderData <|-- Discount
+Cart <|-- CartItem
+Payments <|-- Payment
+Payment <|-- PaymentData
+Registrations <|-- Registration
+Registration <|-- RegistrationData
+Refunds <|-- Refund
+Refund <|-- RefundData
+
+@enduml

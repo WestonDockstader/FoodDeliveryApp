@@ -1,0 +1,153 @@
+@startuml
+header Learn and Design 2023 - POD 1
+footer Page %page% of %lastpage%
+
+title: Food Delivery Application - Create Order
+
+actor Consumer1
+
+participant Consumer [
+    = Consumer
+]
+
+participant Restaurants [
+    = Restaurants
+]
+
+participant Restaurant [
+    = Restaurant
+]
+
+participant Menu [
+    = Menu
+]
+
+participant MenuItem [
+    = MenuItem
+]
+
+participant Cart [
+    = Cart
+]
+
+participant Order [
+    = Order
+]
+
+participant Payment [
+    = Payment
+]
+
+participant Payments [
+    = Payments
+]
+
+Consumer1 -> Consumer : SignIn()
+    group Restaurants
+        group Find Restaurant
+Consumer -[#blue]> Restaurants : GetRestaurants()
+Consumer <-[#red]-- Restaurants : ArrayList<RestaurantId>
+Consumer -[#green]> Consumer : SelectRestaurant()
+Consumer -[#blue]> Restaurant : GetRestaurantData(RestaurantId)
+Consumer <-[#red]-- Restaurant : RestaurantData
+        end
+        group Select Restaurant
+Consumer -[#green]> Consumer : ViewRating()
+Consumer -[#green]> Consumer : ViewPopularity()
+Consumer -[#green]> Consumer : ViewAverageDeliveryTime()
+Consumer -[#green]> Consumer : SelectRestaurant()
+        end
+    end
+    group Menu
+        group View Menu Items
+Consumer -[#blue]> Menu : GetMenu(RestaurantId)
+Menu --[#red]-> Consumer : Menu
+Consumer -[#green]> Consumer : ViewMenuItems()
+        end
+        group Select Menu Items
+Consumer -[#blue]> Menu : SelectMenuItem()
+Menu --[#red]-> Consumer : MenuItemId
+        end
+    end
+    group Cart
+        group Add Items to Cart
+Consumer -[#blue]> Cart : CreateCartItem(MenuItemId)
+Cart --[#red]-> Consumer : CartItemId
+        end
+        group Edit Cart
+Consumer -[#green]> Consumer : EditCart()
+Consumer -[#blue]> Cart : RemoveItem()
+Consumer -[#blue]> Cart : UpdateItemQuantity()
+Consumer -[#blue]> Cart : AddItemInstructions()
+Cart --[#red]-> Consumer : CartContents
+        end
+    end
+    group Order
+        group Submit Order
+Consumer -[#blue]> Order : CreateOrder(ConsumerId, RestaurantId)
+Order -[#blue]> Restaurant : GetAverageDeliveryTime()
+        note right
+        Number of minutes = Average Delivery Time
+        end note
+Restaurant --[#red]-> Order : int (number of minutes)
+Consumer <[#red]-- Order : OrderId
+Consumer -[#green]> Consumer : ReviewOrder()
+Consumer -[#blue]> Order : DiscountCode(OrderId)
+Consumer -[#blue]> Payment : CreatePayment(OrderId, PaymentData)
+Payment -[#blue]> Payments : AddNewPayment(PaymentId)
+Consumer <[#red]-- Payment : PaymentId
+Consumer -[#blue]> Order : SubmitOrder(OrderId, PaymentId)
+Restaurant <[#blue]- Order: AddActiveOrder(OrderId)
+Consumer <[#red]-- Order : OrderStatus
+        end
+        group Process Order
+Restaurant -[#green]> Restaurant : ProcessActiveOrders()
+Restaurant -[#blue]> Order : SetOrderStatus(OrderId, OrderStatus)
+            note left
+                OrderStatus = RECEIVED
+            end note
+Restaurant -[#blue]> Payments : GetPayments()
+Restaurant <[#red]-- Payments : ArrayList<PaymentId>
+Restaurant -[#blue]> Payments : GetPaymentData(PaymentId)
+Restaurant <[#red]-- Payments : PaymentData
+Restaurant -[#green]> Restaurant : IsPaymentApproved()
+Restaurant -[#green]> Restaurant : AcceptDeclineOrder()
+            note left
+            Accept or decline the Order
+            OrderStatus
+                ACCEPTED (start to make the order)
+                DECLINED (don't make the order)
+            end note
+Restaurant -[#blue]> Order : SetOrderStatus(OrderId, OrderStatus)
+        end
+        group Deliver Order
+Restaurant -[#green]> Restaurant : MakingOrder()
+            note left
+                OrderStatus = INPROCESS (making the order)
+            end note
+Restaurant -[#blue]> Order : SetOrderStatus(OrderId, OrderStatus)
+Restaurant -[#green]> Restaurant : OrderShipped()
+            note left
+                OrderStatus = SHIPPED (order with delivery driver)
+            end note
+Restaurant -[#blue]> Order : SetOrderStatus(OrderId, OrderStatus)
+Restaurant -[#green]> Restaurant : OrderDelivered()
+            note left
+                OrderStatus = DELIVERED (order delivered to Consumer)
+            end note
+Restaurant -[#blue]> Payment : CodCollected(OrderId, PaymentId)
+Restaurant -[#blue]> Order : SetOrderStatus(OrderId, OrderStatus)
+Restaurant -[#green]> Restaurant : UpdateCompletedOrders()
+        end
+        group Cancel Order
+Consumer -[#blue]> Order : CancelOrder()
+Order -[#blue]> Restaurant : CancelOrder()
+Restaurant --[#red]-> Order : OrderStatus
+Order -[#green]> Order : CanCancelOrder()
+Order -[#green]> Order : UpdateConsumerOrderStatus()
+Order --[#red]-> Consumer : OrderStatus
+        end
+    end
+
+
+@enduml
