@@ -24,11 +24,7 @@ participant Order [
 
 Restaurant1 -> RestaurantOwner : SignIn()
     group New Order
-Orders -[#blue]> Restaurant : NotifyNewOrder()
-RestaurantOwner -[#blue]> Restaurant : GetNewOrder()
-Restaurant -[#red]-> RestaurantOwner : OrderId
-RestaurantOwner -[#blue]> Order : GetOrder(OrderId)
-Order -[#red]-> RestaurantOwner : OrderId
+Orders -[#blue]> Restaurant : NotifyNewOrder(OrderId)
 RestaurantOwner -[#blue]> Restaurant : ProcessNewOrder(OrderId)
 Restaurant -[#blue]> Order : GetPaymentStatus(OrderId)
 Order -[#red]-> Restaurant : PaymentStatus
@@ -38,11 +34,10 @@ Restaurant -[#green]> Restaurant : AcceptRejectOrder()
     end note
 Restaurant -[#blue]> Order : SetOrderStatus(DECLINED)
 Restaurant -[#green]> Restaurant : StopOrder()
+Restaurant -[#blue]> Order : SetOrderStatus(ACCEPTED)
     note left
         PAID or COD orders are ACCEPTED
     end note
-Restaurant -[#blue]> Order : SetOrderStatus(ACCEPTED)
-
 Restaurant -[#green]> Restaurant : MakingOrder()
 Restaurant -[#blue]> Order : SetEstimatedDeliveryTime(datetime)
     end
