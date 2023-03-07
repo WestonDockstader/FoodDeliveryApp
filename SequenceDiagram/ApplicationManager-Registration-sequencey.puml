@@ -41,6 +41,7 @@ ApplicationManager -[#blue]> Registration : SetRegistrationStatus(RegistrationId
     end
     group View Registrations
 Registrations <[#blue]- ApplicationManager : GetRegistrations()
+Registrations --[#red]> ApplicationManager : ArrayList<Registrations>
 ApplicationManager -[#green]> ApplicationManager : ViewOpenRegistrations()
 ApplicationManager -[#green]> ApplicationManager : ViewRejectedRegistrations()
 ApplicationManager -[#green]> ApplicationManager : ViewAcceptedRegistrations()
