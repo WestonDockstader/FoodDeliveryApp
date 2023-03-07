@@ -4,6 +4,9 @@ footer Page %page% of %lastpage%
 
 title: Food Delivery Application - Class Diagram
 
+' Public (+): Accessible by all classes.
+' Private (-): Accessible only within the current class.
+' Protected (#): Accessible within the current class and its subclass.
 
 abstract class User {
     #Id: string
@@ -12,27 +15,84 @@ abstract class User {
     #EmailAddress: string
     #UserName: string
     #Password: string
-    #Role: enum
+    #Role: Role
     #Active: bool
+    +LogIn(): bool
+    +LogOut(): bool
+    +ModifyUserName(userName: string): bool
+    +ModifyEmailAddress(emailAddress: string): bool
+    +ModifyPassword(password: string): bool
 }
 
-abstract class Address {
+enum Role {
+    Consumer
+    ApplicationManager
+    RestaurantOwner
+}
+
+class Address {
     #Id: string
     #StreetAddress: string
     #City: string
     #State: string
     #Zipcode: string
-    Validate(): bool
+    +Validate(): bool
+    +ModifyAddress(streetAddress: string, city: string, state: string, zipCode: string): bool
+    +GetFullAddress(): string
 }
 
-abstract class Registration {
+class ApplicationManager {
+    +PendingApprovals: ArrayList<AccountId>
+    +PendingRefunds: ArrayList<RefundId>
+    +ApproveRegistration(registrationId: string): bool
+    +RejectRegistration(registrationId: string, reason: string): bool
+    +InitiateRefund(orderId: string): bool
+    +ApproveRefund(refundId: string): bool
+    +DeclineRefund(refundId: string, reason: string): bool
+    +ProcessRefund(RefundId: string): void
+}
+
+class RestaurantOwner {
+    +AddressId: string
+    +RestaurantId: string
+    +ActiveOrders: ArrayList<Order>
+    +CompletedOrders: ArrayList<Order>
+    +ActiveRefunds: ArrayList<Refund>
+    +CompletedRefunds: ArrayList<Refund>
+    +AddMenuItem(menuItem: MenuItem): bool
+    +RemoveMenuItem(menuItemId: string): bool
+    +ModifyMenuItem(menuItemId: string, name: string, description: string, vegetarian: bool, price: float): bool
+    +UpdateOrderStatus(orderId: string, orderStatus: OrderStatus): bool
+    +UpdateRefundStatus(refundId: string, refundStatus: +RefundStatus): bool
+}
+
+class Consumer {
+    +AddressId: string
+    +Orders: ArrayList<Order>
+    +ViewOrders(): ArrayList<Order>
+    +ViewCart(): ArrayList<OrderMenuItem>
+    +EditCart(): void
+    +AddToCart(menuItemId: string, careInstructions: string): bool
+    +RemoveFromCart(orderMenuItemId: string): bool
+    +PlaceOrder(deliveryAddress: Address): bool
+    +CancelOrder(orderId: string): bool
+    +RequestRefund(orderId: string, reason: string): bool
+    +TrackOrderStatus(orderId: string): OrderStatus
+}
+
+class Registration {
     #Id: string
-    #UserId: string
+    #RestaurantOwnerId: string
     #AddressId: string
-    #AccountType: string
-    #ApprovalStatus: string
-    #Active: bool
+    #RegistrationStatus: RegistrationStatus
+    +UpdateStatus(status: RegistrationStatus): void
 } 
+
+enum RegistrationStatus {
+    Pending
+    Accepted
+    Declined
+}
 
 class Restaurant {
     #Id: string
@@ -42,10 +102,16 @@ class Restaurant {
     #Cuisine: ArrayList<string>
     #Vegetarian: bool
     #NonVegtarian: bool
-    #ApprovalStatus: enum
-    #Rating: Rating
-    #Popularity: PopularityRating
+    #RegistrationId: string
+    #Rating: string
+    #Popularity: string
     #CalculateDeliveryTime(): float
+    #GetRating(): string
+    #GetPopularity(): string
+    +AddMenu(menu: Menu): void
+    +AddCuisine(cuisineName: string): bool
+    +RemoveCuisine(cuisineName: string): bool
+    +ModifyCuisine(cuisineName: string, newName: string): bool
 }
 
 class MenuItem {
@@ -55,47 +121,57 @@ class MenuItem {
     #Description: string
     #Vegetarian: bool
     #Price: float
+    +UpdateItem(name: string, type: string, description: string, vegetarian: bool, price: float): void
+    +ModifyType(type: string): bool
 }
 
 class OrderMenuItem {
     #CareInstructions: string
     #MenuItemId: string
+    +ModifyCareInstructions(careInstructions: string): bool
 }
 
-abstract class Menu {
+class Menu {
     #Id: string
     #RestaurantId: string
     #MenuItems: ArrayList<MenuItemId>
 }
 
-abstract class Payment {
+class Payment {
     #Id: string
     #PaymentTypeName: string
     #AccountHolderName: string
     #BillingAddressId: string
     #AccountNumber: string
-    #Currency: string
-    #Type: string
+    #Currency: Currency
+    #Type: PaymentType
+    #PaymentStatus: PaymentStatus
 }
 
-abstract class OrderStatus {
-    #Id: string
-    #OrderId: string
-    #OrderStatus: enum
+enum Currency {
+    USD
+    INR
 }
 
-class PaymentStatus {
-    #Id: string
-    #PaymentId: string
-    #OrderId: string
-    #PaymentStatus: enum
-    + bool ProcessPayment()
+enum PaymentType {
+    COD
+    DebitCard
+}
+
+enum PaymentStatus {
+    Pending
+    Processing
+    Completed
+    Failed
 }
 
 class Cart {
     #Id: string
     #ConsumerId: string
     #Items: ArrayList<OrderMenuItemId>
+    +AddItem(item: OrderMenuItem): void
+    +RemoveItem(ItemId: string): void
+    +ModifyItems(items: ArrayList): bool
 }
 
 class Order {
@@ -106,45 +182,67 @@ class Order {
     #CreationDateTime: datetime
     #Items: ArrayList<OrderMenuItemId>
     #PaymentId: string
+    #OrderStatus: OrderStatus
+    #PaymentId: string
+    #RefundId: string
+
     +CalculateTotalItemCost(): float
     +CalculateTax(): float
     +Tip(): float
     +CalculateDeliveryFee(): float
     +CalculateTotalCost(): float
-    #OrderStatus: OrderStatus
-    #PaymentStatus: PaymentStatus
+
+    +MarkAsReceived(): void
+    +MarkAsAccepted(): void
+    +MarkAsShipped(): void
+    +MarkAsDelivered(): void
 }
 
+enum OrderStatus {
+    Received
+    Declined
+    Accepted
+    Processing
+    Shipped
+    Delivered
+}
 
-abstract class Refund {
+class Refund {
     #Id: string
     #OrderId: string
     #SubmitDateTime: datetime
-    #RefundStatus: string
+    #RefundStatus: RefundStatus
 }
 
-class ApplicationManager {
-    +PendingApprovals: ArrayList<AccountId>
-    +PendingRefunds: ArrayList<Refund>
+enum RefundStatus {
+    Requested
+    Acknowledged
+    Accepted
+    Declined
+    Initiated
+    ProcessingPayment
+    Complete
 }
 
-class RestaurantOwner {
-    +AddressId: string
-    +RestaurantId: string
-    +ActiveOrders: ArrayList<Order>
-    +CompletedOrders: ArrayList<Order>
-    +ActiveRefunds: ArrayList<Refund>
-    +CompletedRefunds: ArrayList<Refund>
-}
+    OrderMenuItem <|-- MenuItem
+    ApplicationManager <|-- User
+    RestaurantOwner <|-- User
+    Consumer <|-- User
 
-class Consumer {
-    +AddressId: string
-    +Orders: ArrayList<Order>
-    +AddressId: string
-}
-
-OrderMenuItem <|-- MenuItem
-ApplicationManager <|-- User
-RestaurantOwner <|-- User
-Consumer <|-- User
+    Refund -- RefundStatus
+    Order -- OrderStatus
+    Payment -- PaymentStatus
+    Order -- Payment
+    Consumer -- Order
+    Restaurant -- Order
+    Menu -- MenuItem
+    Cart -- OrderMenuItem
+    Payment -- PaymentType
+    Payment -- Currency
+    RestaurantOwner -- Registration
+    Registration -- RegistrationStatus
+    ApplicationManager -- Registration
+    User -- Address
+    Restaurant -- Address
+    Consumer -- Cart
 @enduml

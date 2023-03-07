@@ -1,0 +1,30 @@
+@startuml
+  left to right direction
+  actor "Restaurant Owner" as RestaurantOwner
+  actor "Consumer" as Consumer
+  actor "Application Manager" as ApplicationManager
+
+
+  package Order {
+    usecase "View Order" as ViewOrder
+    usecase "Update Order Status" as UpdateOrder
+  }
+
+  package Payment {
+    usecase "Process Payment" as ProcessPayment
+  }
+
+  package Refund {
+    usecase "Request Refund" as RequestRefund
+    usecase "Approve Refund" as ApproveRefund
+    usecase "Intiate Refund" as InitiateRefund
+  }
+
+  Consumer --> RequestRefund
+  Consumer --> ViewOrder
+  RestaurantOwner --> ApproveRefund
+  RestaurantOwner --> UpdateOrder
+  ApplicationManager --> UpdateOrder
+  ApplicationManager --> InitiateRefund
+  ApplicationManager --> ProcessPayment
+@enduml

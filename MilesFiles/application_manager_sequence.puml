@@ -14,10 +14,6 @@
       = Registrations
   ]
 
-  participant RegistrationStatus [
-      = RegistrationStatus
-  ]
-
   participant Orders [
       = Orders
   ]
@@ -34,10 +30,6 @@
       = Payment
   ]
 
-  participant PaymentStatus [
-      = PaymentStatus
-  ]
-' Simplify statuses 
   group Authenticate
     ApplicationManager -[#blue]> ManagerView : SignIn()
     ManagerView -[#green]> ManagerView : evaluateRole()
@@ -50,8 +42,7 @@
     ManagerView -[#blue]-> Restaurant : GetRestaurantInfo()
     Restaurant -[#red]-> ManagerView : RestaurantInfo
     ManagerView -[#blue]> Registrations : UpdateRegistrationStatus()
-    Registrations -[#blue]> RegistrationStatus : UpdateRegistrationStatus()
-    ' Restaurant -[#red]> Registrations : Success
+    Registrations -[#green]> Registrations : UpdateRegistrationStatus()
     Registrations -[#red]> ManagerView : Updated Registrations
   end
 
@@ -67,8 +58,7 @@
     ManagerView -[#blue]> OrderStatus : InitiateRefund()
     OrderStatus -[#blue]> Payment : InitiateRefund()
     Payment -[#green]> Payment : ProcessPayment()
-    Payment -[#blue]> PaymentStatus : UpdateStatus()
-    PaymentStatus -[#red]> Payment : Success
+    Payment -[#green]> Payment : UpdateStatus()
     Payment -[#red]> OrderStatus : Success
     OrderStatus -[#red]> Orders : Success 
     Orders -[#red]> ManagerView : Updated Flagged Orders
