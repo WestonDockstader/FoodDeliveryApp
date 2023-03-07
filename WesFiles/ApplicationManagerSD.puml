@@ -2,11 +2,6 @@
 
 title Food Delivery Application\nApplication Manager Sequence Diagram 
 
-'one line comment
-
-/'
-multiple line comment
-'/
 actor ApplicationManager
 
 participant AppMan_UI as AppMan_UI

@@ -10,101 +10,79 @@ participant Cart as Cart
 participant Order as Order 
 participant Payment as Payment 
 
-'Single line comment
-
-/'
-Multiple Line comment
-'/
 group Selecting a Restaurant
-Consumer -[#blue]> RestaurantList : Get Restaurant List
-activate RestaurantList
-RestaurantList -[#red]-> Consumer : Return List
-loop
-Consumer -[#blue]> RestaurantList : Select Filter
-RestaurantList -[#green]> RestaurantList : FilterList()
-'/
-'\n   Location\n   Veg/Non-Veg\n   Rating\n   MostPopular\n   DeliveryTime
-/'
-RestaurantList -[#green]> RestaurantList : FilterLocation()
-RestaurantList -[#green]> RestaurantList : FilterVeg/Non-Veg()
-RestaurantList -[#green]> RestaurantList : FilterRating()
-RestaurantList -[#green]> RestaurantList : FilterMostPopular()
-RestaurantList -[#green]> RestaurantList : FilterDeliveryTime()
-'/
-RestaurantList -[#red]-> Consumer : Return Filtered List
-end /'End of Loop'/
-/'
-Should we show a filter return for all options
-'/
-Consumer -[#blue]> RestaurantList : Select Restaurant
+    Consumer -[#blue]> RestaurantList : Get Restaurant List
+    activate RestaurantList
+    RestaurantList -[#red]-> Consumer : Return List
+    Consumer -[#blue]> RestaurantList : Select Filter
+    RestaurantList -[#green]> RestaurantList : FilterList()
+    RestaurantList -[#red]-> Consumer : Return Filtered List
+    Consumer -[#blue]> RestaurantList : Select Restaurant
 end /'End of Selecting a Restaurant Group'/
 
 group View Menu and Create Cart
-RestaurantList -[#blue]> Menu : Get Menu
-deactivate RestaurantList
-activate Menu
-Menu -[#red]-> Consumer : Return Menu
-loop 
-Consumer -[#blue]> Menu : Select Item
-Menu -[#blue]> Cart : Send to Cart
-deactivate Menu
-activate Cart
-Cart -[#green]> Cart : AddToCart(Item)
-Cart -[#green]> Cart : CalculateSubTotal()
-Cart -[#red]-> Consumer : Return Updated Cart
+    RestaurantList -[#blue]> Menu : Get Menu
+    deactivate RestaurantList
+    activate Menu
+    Menu -[#red]-> Consumer : Return Menu
+    Consumer -[#blue]> Menu : Select Item
+    Menu -[#blue]> Cart : Send to Cart
+    deactivate Menu
+    activate Cart
+    Cart -[#green]> Cart : AddToCart(Item)
+    Cart -[#green]> Cart : CalculateSubTotal()
+    Cart -[#red]-> Consumer : Return Updated Cart
 
-Consumer -[#blue]> Cart : Update Quantity
-Cart -[#green]> Cart : UpdateItemQuantity()
-Cart -[#green]> Cart : CalculateSubTotal()
-Cart -[#red]-> Consumer : Return Updated Cart
+    Consumer -[#blue]> Cart : Update Quantity
+    Cart -[#green]> Cart : UpdateItemQuantity()
+    Cart -[#green]> Cart : CalculateSubTotal()
+    Cart -[#red]-> Consumer : Return Updated Cart
 
-Consumer -[#blue]> Cart : Remove Item
-Cart -[#green]> Cart : RemoveItem()
-Cart -[#green]> Cart : CalculateSubTotal()
-Cart -[#red]-> Consumer : Return Updated Cart
+    Consumer -[#blue]> Cart : Remove Item
+    Cart -[#green]> Cart : RemoveItem()
+    Cart -[#green]> Cart : CalculateSubTotal()
+    Cart -[#red]-> Consumer : Return Updated Cart
 
-Consumer -[#blue]> Cart : Update Cart Instructions
-Cart -[#green]> Cart : UpdateInstructions()
-Cart -[#red]-> Consumer : Return Updated Cart
-deactivate Cart
-end /'End of Loop'/
+    Consumer -[#blue]> Cart : Update Cart Instructions
+    Cart -[#green]> Cart : UpdateInstructions()
+    Cart -[#red]-> Consumer : Return Updated Cart
+    deactivate Cart
 end /'End of Create Cart'/
 
 group Submit Order
-Consumer -[#blue]> Order : Create Order
-activate Order
-Order -[#green]> Order : CalculateDeliveryFee()
-Order -[#green]> Order : CalculateTotal()
-Order -[#red]-> Consumer : Return Total
-loop
-Consumer -[#blue]> Order : RequestDiscount
-Order -[#green]> Order : ValidateDiscount()
-alt Discount isValid
-Order -[#green]> Order : ApplyDiscount()
-Order -[#green]> Order : CalculateTotal()
-Order -[#red]-> Consumer : Return Total
-else Discount notValid
-Order -[#red]-> Consumer : Return Response
-end /'End Discount isValid Alt'/
-end /'End Request Discount Loop'/
+    Consumer -[#blue]> Order : Create Order
+    activate Order
+    Order -[#green]> Order : CalculateDeliveryFee()
+    Order -[#green]> Order : CalculateTotal()
+    Order -[#red]-> Consumer : Return Total
+    loop
+    Consumer -[#blue]> Order : RequestDiscount
+    Order -[#green]> Order : ValidateDiscount()
+        alt Discount isValid
+        Order -[#green]> Order : ApplyDiscount()
+        Order -[#green]> Order : CalculateTotal()
+        Order -[#red]-> Consumer : Return Total
+        else Discount notValid
+        Order -[#red]-> Consumer : Return Response
+        end /'End Discount isValid Alt'/
+    end /'End Request Discount Loop'/
 
-'Start Here
-Consumer -[#blue]> Payment : Select Payment
-activate Payment
-alt payment is Wallet/Online Payment
-Payment -[#green]> Payment : ToPayService()
-else payment is COD
-end /'End Payment Type'/
-Payment -[#green]> Payment : InitiateOrder()
-Payment -[#blue]> Order : Store Order
-deactivate Payment
-Order -[#red]-> Consumer : Send Reciept
+    Consumer -[#blue]> Payment : Select Payment
+    activate Payment
+        alt payment is Wallet/Online Payment
+        Payment -[#green]> Payment : ToPayService()
+        else payment is COD
+        end /'End Payment Type'/
+    Payment -[#green]> Payment : InitiateOrder()
+    Payment -[#blue]> Order : Store Order
+    deactivate Payment
+    Order -[#red]-> Consumer : Send Reciept
 end /'End of Sumbit Order'/
 
 group Get Previous Orders 
-Consumer -[#blue]> Order : Get Previous Orders
-Order -[#red]-> Consumer : Return Previous Orders
-deactivate Order
+    Consumer -[#blue]> Order : Get Previous Orders
+    Order -[#red]-> Consumer : Return Previous Orders
+    deactivate Order
 end /'End previous orders'/
 
 
