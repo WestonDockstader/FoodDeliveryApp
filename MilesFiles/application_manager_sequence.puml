@@ -43,7 +43,6 @@
     Restaurant -[#red]-> ManagerView : RestaurantInfo
     ManagerView -[#blue]> Registrations : UpdateRegistrationStatus()
     Registrations -[#green]> Registrations : UpdateRegistrationStatus()
-    ' Restaurant -[#red]> Registrations : Success
     Registrations -[#red]> ManagerView : Updated Registrations
   end
 
