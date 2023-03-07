@@ -1,0 +1,23 @@
+@startuml
+header Learn and Design 2023 - POD 1
+footer Page %page% of %lastpage%
+title: Food Delivery Application - Use Case Diagram
+
+left to right direction
+
+skinparam actorStyle awesome
+
+actor ApplicationManager #purple;line:purple
+
+actor RestaurantOwner #orange;line:orange
+
+package Registration {
+    (Create New Registration) <-[#orange]- RestaurantOwner
+    ApplicationManager -[#purple]-> (Create New Registration)
+    (Registrations By Owner) <-[#orange]- RestaurantOwner
+
+    ApplicationManager -[#purple]-> (Process New Registration)
+    ApplicationManager -[#purple]-> (View Registrations)
+}
+
+@enduml

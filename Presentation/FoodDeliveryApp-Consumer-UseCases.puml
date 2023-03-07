@@ -1,0 +1,41 @@
+@startuml
+header Learn and Design 2023 - POD 1
+footer Page %page% of %lastpage%
+title: Food Delivery Application - Consumer Use Case Diagram
+
+skinparam actorStyle awesome
+
+/'left to right direction'/
+
+actor Consumer #blue;line:blue
+
+Package Restaurant {
+    Consumer -left-> (Find Restaurant)
+    Consumer -left-> (Select Restaurant)
+}
+
+Package Menu {
+    Consumer -right-> (View Menu Items)
+    Consumer -right-> (Select Menu Items)
+}
+
+Package Cart {
+    Consumer --up-> (Add Items to Cart)
+    Consumer --up-> (Edit Cart)
+}
+
+Package Order {
+    Consumer ---> (Submit Order)
+    Consumer ---> (Process Order)
+    Consumer ---> (Process Payment)
+    Consumer ---> (Delivery Order)
+    Consumer ---> (Cancel Order)
+}
+
+package Refund {
+    Consumer --up-> (Request Refund)
+    Consumer --up-> (Notify Refund)
+    Consumer --up-> (View Refund)
+}
+
+@enduml
