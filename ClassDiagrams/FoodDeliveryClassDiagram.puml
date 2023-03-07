@@ -63,7 +63,7 @@ class Restaurant {
     + void AddActiveOrder(OrderId)
     + OrderId GetOrder()
     + OrderStatus ProcessNewOrder(OrderId)
-    + void NotifyNewOrder()
+    + void NotifyNewOrder(OrderId)
     + string GetId()
     + int GetPopularity()
     + string Rating()
