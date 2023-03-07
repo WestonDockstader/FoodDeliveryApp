@@ -106,6 +106,8 @@ Restaurant -[#blue]> Order : SetOrderStatus(OrderId, OrderStatus)
             note left
                 OrderStatus = RECEIVED
             end note
+        end
+        group Process Payment
 Restaurant -[#blue]> Payments : GetPayments()
 Restaurant <[#red]-- Payments : ArrayList<PaymentId>
 Restaurant -[#blue]> Payments : GetPaymentData(PaymentId)
@@ -113,10 +115,10 @@ Restaurant <[#red]-- Payments : PaymentData
 Restaurant -[#green]> Restaurant : IsPaymentApproved()
 Restaurant -[#green]> Restaurant : AcceptDeclineOrder()
             note left
-            Accept or decline the Order
-            OrderStatus
-                ACCEPTED (start to make the order)
-                DECLINED (don't make the order)
+                Accept or decline the Order
+                OrderStatus
+                    ACCEPTED (start to make the order)
+                    DECLINED (don't make the order)
             end note
 Restaurant -[#blue]> Order : SetOrderStatus(OrderId, OrderStatus)
         end
@@ -148,6 +150,5 @@ Order -[#green]> Order : UpdateConsumerOrderStatus()
 Order --[#red]-> Consumer : OrderStatus
         end
     end
-
 
 @enduml
