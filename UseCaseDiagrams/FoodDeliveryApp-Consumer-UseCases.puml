@@ -5,37 +5,37 @@ title: Food Delivery Application - Consumer Use Case Diagram
 
 skinparam actorStyle awesome
 
-left to right direction
+/'left to right direction'/
 
 actor Consumer #blue;line:blue
 
 Package Restaurant {
-    Consumer -[#blue]-> (Find Restaurant)
-    Consumer -[#blue]-> (Select Restaurant)
+    Consumer -left-> (Find Restaurant)
+    Consumer -left-> (Select Restaurant)
 }
 
 Package Menu {
-    Consumer -[#blue]-> (View Menu Items)
-    Consumer -[#blue]-> (Select Menu Items)
+    Consumer -right-> (View Menu Items)
+    Consumer -right-> (Select Menu Items)
 }
 
 Package Cart {
-    Consumer -[#blue]-> (Add Items to Cart)
-    Consumer -[#blue]-> (Edit Cart)
+    Consumer --up-> (Add Items to Cart)
+    Consumer --up-> (Edit Cart)
 }
 
 Package Order {
-    Consumer -[#blue]-> (Submit Order)
-    Consumer -[#blue]-> (Process Order)
-    Consumer -[#blue]-> (Process Payment)
-    Consumer -[#blue]-> (Delivery Order)
-    Consumer -[#blue]-> (Cancel Order)
+    Consumer ---> (Submit Order)
+    Consumer ---> (Process Order)
+    Consumer ---> (Process Payment)
+    Consumer ---> (Delivery Order)
+    Consumer ---> (Cancel Order)
 }
 
 package Refund {
-    Consumer -[#blue]-> (Request Refund)
-    Consumer -[#blue]-> (Notify Refund)
-    Consumer -[#blue]-> (View Refund)
+    Consumer --up-> (Request Refund)
+    Consumer --up-> (Notify Refund)
+    Consumer --up-> (View Refund)
 }
 
 @enduml
