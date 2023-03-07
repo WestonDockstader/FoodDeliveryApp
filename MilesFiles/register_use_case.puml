@@ -1,0 +1,25 @@
+@startuml
+  left to right direction
+  actor "Restaurant Owner" as RestaurantOwner
+  actor "Application Manager" as ApplicationManager
+
+  package Register {
+    usecase "Approve/Decline" as ApproveDecline
+    usecase "Apply" as Apply
+    usecase "Check Status" as CheckStatus
+    usecase "View Registrations" as ViewRegistrations
+  }
+
+  package "Manage Menu" {
+    usecase "Create Menu" as CreateMenu
+    usecase "Modify Menu" as ModifyMenu
+  }
+
+  ApplicationManager --> ViewRegistrations
+  ApplicationManager --> CheckStatus
+  ApplicationManager --> ApproveDecline
+  RestaurantOwner --> Apply
+  RestaurantOwner --> CheckStatus
+  RestaurantOwner --> CreateMenu
+  RestaurantOwner --> ModifyMenu
+@enduml

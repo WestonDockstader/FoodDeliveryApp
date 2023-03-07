@@ -1,0 +1,54 @@
+@startuml
+  left to right direction
+  actor "Restaurant Owner" as RestaurantOwner
+  actor "Consumer" as Consumer
+  actor "Application Manager" as ApplicationManager
+
+  package Order {
+    usecase "View Orders" as ViewOrders
+    usecase "Accept/Decline" as AcceptDecline
+    usecase "Update Order Status" as UpdateOrderStatus
+  }
+
+  package Restaurant {
+    usecase "View Restaurants" as ViewRestaurants
+    usecase "Filter Restaurants" as FilterRestaurants
+  }
+
+  package Menu {
+    usecase "View Menu" as ViewMenu
+    usecase "Search Menu" as SearchMenu
+  }
+
+  package Item {
+    usecase "View Item" as ViewItem
+    usecase "Add Item to Cart" as AddMenuItemtoCart
+  }
+
+  package Cart {
+    usecase "Modify Cart" as ModifyCart
+    usecase "Add Payment" as AddPayment
+    usecase "Checkout" as Checkout
+  }
+
+  package Payment {
+    usecase "Process Payment" as ProcessPayment
+  }
+
+  Consumer --> ViewRestaurants
+  Consumer --> FilterRestaurants
+  Consumer --> ViewMenu
+  Consumer --> SearchMenu
+  Consumer --> AddMenuItemtoCart
+  Consumer --> ViewItem
+  Consumer --> ModifyCart
+  Consumer --> AddPayment
+  Consumer --> Checkout
+  Consumer --> ViewOrders
+
+  RestaurantOwner --> ViewOrders
+  RestaurantOwner --> AcceptDecline
+  RestaurantOwner --> UpdateOrderStatus
+
+  ApplicationManager --> ProcessPayment
+@enduml
