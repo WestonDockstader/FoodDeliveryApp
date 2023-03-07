@@ -24,7 +24,7 @@ participant Order [
 
 Restaurant1 -> RestaurantOwner : SignIn()
     group New Order
-Orders -[#blue]> Restaurant : NotifyNewOrder(OrderId)
+Orders -[#blue]> RestaurantOwner : NotifyNewOrder(OrderId)
 RestaurantOwner -[#blue]> Restaurant : ProcessNewOrder(OrderId)
 Restaurant -[#blue]> Order : GetPaymentStatus(OrderId)
 Order -[#red]-> Restaurant : PaymentStatus
