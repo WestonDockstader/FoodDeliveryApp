@@ -14,16 +14,22 @@ actor ApplicationManager #purple;line:purple
 rectangle Refund {
     together {
         Consumer -[#blue]-> (Request Refund)
+        Consumer -[#blue]-> (Notify Refund)
         Consumer -[#blue]-> (View Refund)
     }
     together {
-        (Refund Notification) <-[#purple]- ApplicationManager
+        (Notify Refund) <-[#purple]- ApplicationManager
+        (Acknowledge Refund) <-[#purple]- ApplicationManager
         (Process Refund) <-[#purple]- ApplicationManager
         (Notify Refund Requested) <-[#purple]- ApplicationManager
     }
     together {
-        RestaurantOwner  -[#orange]-> (Notify Refund Requested)
+        RestaurantOwner  -[#orange]-> (Notify Refund)
         RestaurantOwner  -[#orange]-> (Acknowledge Refund)
+        RestaurantOwner  -[#orange]-> (Process Refund)
     }
+
+    (Request Refund) .> (View Refund) : includes
+    (Notify Refund) .> (View Refund) : includes
 }
 @enduml

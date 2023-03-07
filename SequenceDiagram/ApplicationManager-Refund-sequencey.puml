@@ -37,9 +37,10 @@ participant RestaurantOwner [
 actor AppManager1
 actor Restaurant1
 
-
 Consumer1 -> Consumer : SignIn()
+RestaurantOwner <- Restaurant1 : SignIn()
 ApplicationManager <- AppManager1 : SignIn()
+
     group Request Refund
 Consumer -[#blue]> Orders : GetOrderHistory()
 Consumer <[#red]- Orders : ArrayList<OrderId>
@@ -53,11 +54,9 @@ Consumer <[#red]- Refund : RefundStatus
           DENIED
         end note
     end
-    group Refund Notification
+    group Notify Refund
 Refund -[#blue]> Refunds : AddRefund(OrderId)
 Refunds -[#blue]> ApplicationManager : NotifyNewRefund(RefundId)
-    end
-    group Notify Refund Requested
 Refunds <[#blue]- ApplicationManager : GetRefund(RefundId)
 Refunds -[#red]> ApplicationManager : RefundId
 Refunds <[#blue]- ApplicationManager : GetRefundData(RefundId)
@@ -68,7 +67,6 @@ Order -[#red]> ApplicationManager : OrderStatus
 ApplicationManager -[#blue]> RestaurantOwner : NotifyRefundRequest(OrderId)
     end
     group Acknowledge Refund
-RestaurantOwner <- Restaurant1 : SignIn()
 Order <[#blue]- RestaurantOwner : SetRefundable(OrderId, bool)
 Order -[#blue]> ApplicationManager : AcknowledgeRefundable(bool)
         note left
